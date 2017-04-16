@@ -1,0 +1,7 @@
+https://www.libsdl.org/
+https://en.wikipedia.org/wiki/Doom_engine
+https://en.wikipedia.org/wiki/Allegro_(software)
+https://en.wikipedia.org/wiki/Stratagus
+https://en.wikipedia.org/wiki/Adventure_Game_Interpreter
+https://en.wikipedia.org/wiki/Build_(game_engine)
+https://github.com/orangeduck/Corange
