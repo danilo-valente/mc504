@@ -36,8 +36,9 @@ LTexture *gDotTexture = NULL;
 //Data access semaphore
 SDL_sem *gDataLock = NULL;
 
-//The "data buffer"
-int gData = -1;
+#define T 5
+Worker *gWorkers[T];
+Dot gDots[T];
 
 bool init() {
     //Initialization flag
@@ -134,15 +135,20 @@ int main(int argc, char *args[]) {
             //Event handler
             SDL_Event e;
 
-            int ids[] = {0, 1};
-            Worker workerA(&gData, gDataLock, "Thread A");
-            Worker workerB(&gData, gDataLock, "Thread B");
+            for (int i = 0; i < T; i++) {
+                gWorkers[i] = new Worker(i, gDots, T, gRenderer, gDataLock);
+                gDots[i].setPos(20 * i, 0);
+                gDots[i].setTexture(gDotTexture);
+            }
 
             //Run the threads
             srand(SDL_GetTicks());
-            SDL_Thread *threadA = SDL_CreateThread(Worker::work, "Thread A", (void *) &workerA);
-            SDL_Delay(16 + rand() % 32);
-            SDL_Thread *threadB = SDL_CreateThread(Worker::work, "Thread B", (void *) &workerB);
+
+            SDL_Thread *threads[T];
+            for (int i = 0; i < T; i++) {
+                threads[i] = SDL_CreateThread(Worker::work, NULL, (void *) gWorkers[i]);
+                SDL_Delay(16 + rand() % 32);
+            }
 
             //The dot that will be moving around on the screen
             Dot dot;
@@ -174,19 +180,20 @@ int main(int argc, char *args[]) {
                 stepTimer.start();
 
                 //Clear screen
-                SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
-                SDL_RenderClear(gRenderer);
+//                SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
+//                SDL_RenderClear(gRenderer);
 
                 //Render dot
-                dot.render();
+//                dot.render();
 
                 //Update screen
-                SDL_RenderPresent(gRenderer);
+//                SDL_RenderPresent(gRenderer);
             }
 
             //Wait for threads to finish
-            SDL_WaitThread(threadA, NULL);
-            SDL_WaitThread(threadB, NULL);
+            for (int i = 0; i < T; i++) {
+                SDL_WaitThread(threads[i], NULL);
+            }
         }
     }
 

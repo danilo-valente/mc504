@@ -30,6 +30,8 @@ public:
 
     void setTexture(LTexture *gDotTexture);
 
+    void setPos(float x, float y);
+
 private:
     float mPosX, mPosY;
     float mVelX, mVelY;

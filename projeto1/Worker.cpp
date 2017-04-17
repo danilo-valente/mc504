@@ -1,14 +1,16 @@
 #include "Worker.h"
 
-Worker::Worker(int *data, SDL_sem *dataLock, char *name) {
-    this->data = data;
+Worker::Worker(int id, Dot *dots, int n, SDL_Renderer *renderer, SDL_sem *dataLock) {
+    this->id = id;
+    this->dots = dots;
+    this->n = n;
+    this->renderer = renderer;
     this->dataLock = dataLock;
-    this->name = name;
 }
 
 int Worker::work(void *arg) {
     Worker *worker = (Worker *) arg;
-    printf("%s starting...\n", worker->name);
+    printf("[#%d] starting...\n", worker->id);
 
     //Pre thread random seeding
     srand(SDL_GetTicks());
@@ -21,17 +23,23 @@ int Worker::work(void *arg) {
         //Lock
         SDL_SemWait(worker->dataLock);
 
-        //Print pre work data
-        printf("%s gets %d\n", worker->name, *worker->data);
+        SDL_SetRenderDrawColor(worker->renderer, 0xFF, 0xFF, 0xFF, 0xFF);
+        SDL_RenderClear(worker->renderer);
+
+        printf("[#%d] render\n", worker->id);
+        worker->dots[worker->id].render();
+
+        SDL_RenderPresent(worker->renderer);
 
         //Wait
-        SDL_Delay(1000);
+        SDL_Delay(250);
 
-        //"Work"
-        *worker->data = rand() % 256;
+        SDL_SetRenderDrawColor(worker->renderer, 0xFF, 0xFF, 0xFF, 0xFF);
+        SDL_RenderClear(worker->renderer);
 
-        //Print post work data
-        printf("%s sets %d\n\n", worker->name, *worker->data);
+        printf("[#%d] hide\n", worker->id);
+
+        SDL_RenderPresent(worker->renderer);
 
         //Unlock
         SDL_SemPost(worker->dataLock);
@@ -40,7 +48,7 @@ int Worker::work(void *arg) {
         SDL_Delay(16 + rand() % 640);
     }
 
-    printf("%s finished!\n\n", worker->name);
+    printf("[#%d] finished!\n", worker->id);
 
     return 0;
 }

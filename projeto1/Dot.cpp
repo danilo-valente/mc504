@@ -14,6 +14,11 @@ Dot::Dot() {
     mVelY = 0;
 }
 
+void Dot::setPos(float x, float y) {
+    mPosX = x;
+    mPosY = y;
+}
+
 void Dot::handleEvent(SDL_Event &e) {
     //If a key was pressed
     if (e.type == SDL_KEYDOWN && e.key.repeat == 0) {

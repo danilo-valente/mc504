@@ -4,17 +4,20 @@
 #include <SDL.h>
 
 #include "LTexture.h"
+#include "Dot.h"
 
 class Worker {
 public:
-    Worker(int *data, SDL_sem *dataLock, char *name);
+    Worker(int id, Dot *dots, int n, SDL_Renderer *renderer, SDL_sem *dataLock);
 
     static int work(void *worker);
 
 private:
-    int *data;
+    int id;
+    Dot *dots;
+    int n;
+    SDL_Renderer *renderer;
     SDL_sem *dataLock;
-    char *name;
 };
 
 #endif
