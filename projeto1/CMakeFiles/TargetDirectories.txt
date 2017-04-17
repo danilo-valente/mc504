@@ -1,0 +1,3 @@
+/home/danilo/projects/mc504/projeto1/CMakeFiles/edit_cache.dir
+/home/danilo/projects/mc504/projeto1/CMakeFiles/rebuild_cache.dir
+/home/danilo/projects/mc504/projeto1/CMakeFiles/projeto1.dir
