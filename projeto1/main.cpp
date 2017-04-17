@@ -6,7 +6,6 @@ and may not be redistributed without written permission.*/
 #include <SDL_image.h>
 
 #include "LTexture.h"
-#include "LTimer.h"
 #include "Dot.h"
 
 #include "constants.h"
@@ -21,9 +20,6 @@ bool loadMedia();
 //Frees media and shuts down SDL
 void close();
 
-//Our worker thread function
-int worker(void *data);
-
 //The window we'll be rendering to
 SDL_Window *gWindow = NULL;
 
@@ -35,10 +31,6 @@ LTexture *gDotTexture = NULL;
 
 //Data access semaphore
 SDL_sem *gDataLock = NULL;
-
-#define T 5
-Worker *gWorkers[T];
-Dot gDots[T];
 
 bool init() {
     //Initialization flag
@@ -121,6 +113,18 @@ void close() {
 }
 
 int main(int argc, char *args[]) {
+    int n = DEFAULT_N;
+    int delay = DEFAULT_DELAY;
+
+    printf("Number of threads: ");
+    scanf("%d", &n);
+
+    printf("Delay: ");
+    scanf("%d", &delay);
+
+    Worker *gWorkers[n];
+    Dot gDots[n];
+
     //Start up SDL and create window
     if (!init()) {
         printf("Failed to initialize!\n");
@@ -135,8 +139,8 @@ int main(int argc, char *args[]) {
             //Event handler
             SDL_Event e;
 
-            for (int i = 0; i < T; i++) {
-                gWorkers[i] = new Worker(i, gDots, T, gRenderer, gDataLock);
+            for (int i = 0; i < n; i++) {
+                gWorkers[i] = new Worker(i, gDots, n, delay, gRenderer, gDataLock);
                 gDots[i].setPos(20 * i, 0);
                 gDots[i].setTexture(gDotTexture);
             }
@@ -144,18 +148,11 @@ int main(int argc, char *args[]) {
             //Run the threads
             srand(SDL_GetTicks());
 
-            SDL_Thread *threads[T];
-            for (int i = 0; i < T; i++) {
+            SDL_Thread *threads[n];
+            for (int i = 0; i < n; i++) {
                 threads[i] = SDL_CreateThread(Worker::work, NULL, (void *) gWorkers[i]);
                 SDL_Delay(16 + rand() % 32);
             }
-
-            //The dot that will be moving around on the screen
-            Dot dot;
-            dot.setTexture(gDotTexture);
-
-            //Keeps track of time between steps
-            LTimer stepTimer;
 
             //While application is running
             while (!quit) {
@@ -165,33 +162,11 @@ int main(int argc, char *args[]) {
                     if (e.type == SDL_QUIT) {
                         quit = true;
                     }
-
-                    //Handle input for the dot
-                    dot.handleEvent(e);
                 }
-
-                //Calculate time step
-                float timeStep = stepTimer.getTicks() / 1000.f;
-
-                //Move for time step
-                dot.move(timeStep);
-
-                //Restart step timer
-                stepTimer.start();
-
-                //Clear screen
-//                SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
-//                SDL_RenderClear(gRenderer);
-
-                //Render dot
-//                dot.render();
-
-                //Update screen
-//                SDL_RenderPresent(gRenderer);
             }
 
             //Wait for threads to finish
-            for (int i = 0; i < T; i++) {
+            for (int i = 0; i < n; i++) {
                 SDL_WaitThread(threads[i], NULL);
             }
         }

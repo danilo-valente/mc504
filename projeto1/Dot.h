@@ -1,5 +1,5 @@
-#ifndef PROJETO1_LDOT_H
-#define PROJETO1_LDOT_H
+#ifndef DOT_H
+#define DOT_H
 
 #include <SDL.h>
 

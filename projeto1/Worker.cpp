@@ -1,9 +1,10 @@
 #include "Worker.h"
 
-Worker::Worker(int id, Dot *dots, int n, SDL_Renderer *renderer, SDL_sem *dataLock) {
+Worker::Worker(int id, Dot *dots, int n, int delay, SDL_Renderer *renderer, SDL_sem *dataLock) {
     this->id = id;
     this->dots = dots;
     this->n = n;
+    this->delay = delay;
     this->renderer = renderer;
     this->dataLock = dataLock;
 }
@@ -32,7 +33,7 @@ int Worker::work(void *arg) {
         SDL_RenderPresent(worker->renderer);
 
         //Wait
-        SDL_Delay(250);
+        SDL_Delay(worker->delay);
 
         SDL_SetRenderDrawColor(worker->renderer, 0xFF, 0xFF, 0xFF, 0xFF);
         SDL_RenderClear(worker->renderer);

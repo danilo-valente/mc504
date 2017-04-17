@@ -8,7 +8,7 @@
 
 class Worker {
 public:
-    Worker(int id, Dot *dots, int n, SDL_Renderer *renderer, SDL_sem *dataLock);
+    Worker(int id, Dot *dots, int n, int delay, SDL_Renderer *renderer, SDL_sem *dataLock);
 
     static int work(void *worker);
 
@@ -16,6 +16,7 @@ private:
     int id;
     Dot *dots;
     int n;
+    int delay;
     SDL_Renderer *renderer;
     SDL_sem *dataLock;
 };

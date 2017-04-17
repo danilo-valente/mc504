@@ -1,7 +1,3 @@
-//
-// Created by danilo on 4/16/17.
-//
-
 #include "Dot.h"
 
 Dot::Dot() {
