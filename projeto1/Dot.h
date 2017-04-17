@@ -9,13 +9,6 @@
 //The dot that will move around on the screen
 class Dot {
 public:
-    //The dimensions of the dot
-    static const int DOT_WIDTH = 20;
-    static const int DOT_HEIGHT = 20;
-
-    //Maximum axis velocity of the dot
-    static const int DOT_VEL = 640;
-
     //Initializes the variables
     Dot();
 
@@ -28,14 +21,21 @@ public:
     //Shows the dot on the screen
     void render();
 
-    void setTexture(LTexture *gDotTexture);
+    void setRenderer(SDL_Renderer *gRenderer);
 
     void setPos(float x, float y);
 
+    void setSize(int width, int height);
+
+    void setColor(uint32_t color);
+
 private:
+    int width;
+    int height;
+    uint8_t r, g, b, alpha;
     float mPosX, mPosY;
     float mVelX, mVelY;
-    LTexture *gDotTexture;
+    SDL_Renderer *renderer;
 };
 
 #endif //PROJETO1_LDOT_H

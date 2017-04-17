@@ -1,6 +1,14 @@
 #include "Dot.h"
 
 Dot::Dot() {
+    r = 0;
+    g = 0;
+    b = 0;
+    alpha = 0;
+
+    width = 0;
+    height = 0;
+
     //Initialize the position
     mPosX = 0;
     mPosY = 0;
@@ -8,11 +16,25 @@ Dot::Dot() {
     //Initialize the velocity
     mVelX = 0;
     mVelY = 0;
+
+    renderer = NULL;
 }
 
 void Dot::setPos(float x, float y) {
     mPosX = x;
     mPosY = y;
+}
+
+void Dot::setSize(int width, int height) {
+    this->width = width;
+    this->height = height;
+}
+
+void Dot::setColor(uint32_t color) {
+    this->r = (uint8_t) (color >> 24);
+    this->g = (uint8_t) (color >> 16);
+    this->b = (uint8_t) (color >> 8);
+    this->alpha = (uint8_t) color;
 }
 
 void Dot::handleEvent(SDL_Event &e) {
@@ -77,10 +99,11 @@ void Dot::move(float timeStep) {
 }
 
 void Dot::render() {
-    //Show the dot
-    gDotTexture->render((int) mPosX, (int) mPosY);
+    SDL_Rect fillRect = {(int) (mPosX + mPosX / width), (int) (mPosY + mPosY / height), width, height};
+    SDL_SetRenderDrawColor(renderer, r, g, b, alpha);
+    SDL_RenderFillRect(renderer, &fillRect);
 }
 
-void Dot::setTexture(LTexture *gDotTexture) {
-    this->gDotTexture = gDotTexture;
+void Dot::setRenderer(SDL_Renderer *renderer) {
+    this->renderer = renderer;
 }

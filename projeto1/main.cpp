@@ -115,12 +115,16 @@ void close() {
 int main(int argc, char *args[]) {
     int n = DEFAULT_N;
     int delay = DEFAULT_DELAY;
+    int itr = DEFAULT_ITR;
 
     printf("Number of threads: ");
     scanf("%d", &n);
 
     printf("Delay: ");
     scanf("%d", &delay);
+
+    printf("Iterations: ");
+    scanf("%d", &itr);
 
     Worker *gWorkers[n];
     Dot gDots[n];
@@ -140,9 +144,10 @@ int main(int argc, char *args[]) {
             SDL_Event e;
 
             for (int i = 0; i < n; i++) {
-                gWorkers[i] = new Worker(i, gDots, n, delay, gRenderer, gDataLock);
-                gDots[i].setPos(20 * i, 0);
-                gDots[i].setTexture(gDotTexture);
+                gWorkers[i] = new Worker(i, gDots, n, delay, itr, gRenderer, gDataLock);
+                gDots[i].setPos(DOT_WIDTH * i, 0);
+                gDots[i].setRenderer(gRenderer);
+                gDots[i].setSize(DOT_WIDTH, DOT_HEIGHT);
             }
 
             //Run the threads

@@ -1,10 +1,11 @@
 #include "Worker.h"
 
-Worker::Worker(int id, Dot *dots, int n, int delay, SDL_Renderer *renderer, SDL_sem *dataLock) {
+Worker::Worker(int id, Dot *dots, int n, int delay, int itr, SDL_Renderer *renderer, SDL_sem *dataLock) {
     this->id = id;
     this->dots = dots;
     this->n = n;
     this->delay = delay;
+    this->itr = itr;
     this->renderer = renderer;
     this->dataLock = dataLock;
 }
@@ -16,8 +17,7 @@ int Worker::work(void *arg) {
     //Pre thread random seeding
     srand(SDL_GetTicks());
 
-    //Work 5 times
-    for (int i = 0; i < 5; ++i) {
+    for (int i = 0; i < worker->itr; ++i) {
         //Wait randomly
         SDL_Delay(16 + rand() % 32);
 
@@ -28,7 +28,10 @@ int Worker::work(void *arg) {
         SDL_RenderClear(worker->renderer);
 
         printf("[#%d] render\n", worker->id);
-        worker->dots[worker->id].render();
+        for (int j = 0; j < worker->n; j++) {
+            worker->dots[j].setColor(j == worker->id ? COLOR_GREEN : COLOR_RED);
+            worker->dots[j].render();
+        }
 
         SDL_RenderPresent(worker->renderer);
 
@@ -39,6 +42,10 @@ int Worker::work(void *arg) {
         SDL_RenderClear(worker->renderer);
 
         printf("[#%d] hide\n", worker->id);
+        for (int j = 0; j < worker->n; j++) {
+            worker->dots[j].setColor(COLOR_RED);
+            worker->dots[j].render();
+        }
 
         SDL_RenderPresent(worker->renderer);
 
