@@ -10,6 +10,7 @@ and may not be redistributed without written permission.*/
 #include "Dot.h"
 
 #include "constants.h"
+#include "Worker.h"
 
 //Starts up SDL and creates window
 bool init();
@@ -20,6 +21,9 @@ bool loadMedia();
 //Frees media and shuts down SDL
 void close();
 
+//Our worker thread function
+int worker(void *data);
+
 //The window we'll be rendering to
 SDL_Window *gWindow = NULL;
 
@@ -28,6 +32,12 @@ SDL_Renderer *gRenderer = NULL;
 
 //Scene textures
 LTexture *gDotTexture = NULL;
+
+//Data access semaphore
+SDL_sem *gDataLock = NULL;
+
+//The "data buffer"
+int gData = -1;
 
 bool init() {
     //Initialization flag
@@ -75,6 +85,9 @@ bool init() {
 }
 
 bool loadMedia() {
+    //Initialize semaphore
+    gDataLock = SDL_CreateSemaphore(1);
+
     //Loading success flag
     bool success = true;
 
@@ -90,6 +103,10 @@ bool loadMedia() {
 void close() {
     //Free loaded images
     gDotTexture->free();
+
+    //Free semaphore
+    SDL_DestroySemaphore(gDataLock);
+    gDataLock = NULL;
 
     //Destroy window
     SDL_DestroyRenderer(gRenderer);
@@ -116,6 +133,16 @@ int main(int argc, char *args[]) {
 
             //Event handler
             SDL_Event e;
+
+            int ids[] = {0, 1};
+            Worker workerA(&gData, gDataLock, "Thread A");
+            Worker workerB(&gData, gDataLock, "Thread B");
+
+            //Run the threads
+            srand(SDL_GetTicks());
+            SDL_Thread *threadA = SDL_CreateThread(Worker::work, "Thread A", (void *) &workerA);
+            SDL_Delay(16 + rand() % 32);
+            SDL_Thread *threadB = SDL_CreateThread(Worker::work, "Thread B", (void *) &workerB);
 
             //The dot that will be moving around on the screen
             Dot dot;
@@ -156,6 +183,10 @@ int main(int argc, char *args[]) {
                 //Update screen
                 SDL_RenderPresent(gRenderer);
             }
+
+            //Wait for threads to finish
+            SDL_WaitThread(threadA, NULL);
+            SDL_WaitThread(threadB, NULL);
         }
     }
 

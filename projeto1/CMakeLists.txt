@@ -4,7 +4,7 @@ include(FindPkgConfig)
 
 set(CMAKE_C_STANDARD 11)
 
-set(SOURCE_FILES main.cpp LTexture.cpp LTexture.h LTimer.cpp LTimer.h Dot.cpp Dot.h constants.h)
+set(SOURCE_FILES main.cpp LTexture.cpp LTexture.h LTimer.cpp LTimer.h Dot.cpp Dot.h constants.h Worker.cpp Worker.h)
 add_executable(projeto1 ${SOURCE_FILES})
 
 # SDL2
