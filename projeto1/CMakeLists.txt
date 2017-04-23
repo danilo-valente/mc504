@@ -3,6 +3,7 @@ project(projeto1)
 include(FindPkgConfig)
 
 set(CMAKE_C_STANDARD 11)
+set(CMAKE_CXX_STANDARD 11)
 
 set(SOURCE_FILES
         constants.h

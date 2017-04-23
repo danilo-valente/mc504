@@ -4,19 +4,37 @@
 
 using namespace std;
 
-Bus::Bus(int id, SDL_Renderer *renderer, WArgs *args) : Worker(id, renderer, args) {}
+Bus::Bus(int id, SDL_Renderer *renderer, WArgs *args) : Worker(id, renderer, args) {
+    aboard = 0;
+}
 
 void Bus::arrive() {
+    aboard = 0;
+
     log("Bus is arriving");
 
     SDL_Delay(BUS_ARRIVAL_DELAY);
 
+    SDL_SemWait(args->mutex);
+
     log("Bus just arrived");
 }
 
+void Bus::wait() {
+    int n = min(args->waiting, BUS_SEATS);
+    for (int i = 0; i < n; i++) {
+        SDL_SemPost(args->bus);
+        SDL_SemWait(args->boarded);
+        aboard++;
+    }
+
+    args->waiting = max(args->waiting - BUS_SEATS, 0);
+
+    SDL_SemPost(args->mutex);
+}
+
 void Bus::depart() {
-    log("Bus is departing");
-    cout << "[" << id << "] " << "Bus is carring " << SDL_SemValue(args->boarded) << " riders" << endl;
+    log("Bus is departing with " + to_string(aboard) + " riders aboard");
 
     SDL_Delay(BUS_DEPARTURE_DELAY);
 
@@ -34,21 +52,11 @@ int Bus::work() {
 
 //    log("Acquiring lock for mutex");
 
-    SDL_SemWait(args->mutex);
-
     arrive();
 
+    wait();
+
 //    log("Lock for mutex acquired");
-
-    int n = min(args->waiting, BUS_SEATS);
-    for (int i = 0; i < n; i++) {
-        SDL_SemPost(args->bus);
-        SDL_SemWait(args->boarded);
-    }
-
-    args->waiting = max(args->waiting - BUS_SEATS, 0);
-
-    SDL_SemPost(args->mutex);
 
     depart();
 

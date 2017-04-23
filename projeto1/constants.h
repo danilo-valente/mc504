@@ -10,7 +10,7 @@
 #define BUS_ARRIVAL_DELAY       250*20
 #define BUS_DEPARTURE_DELAY     500*20
 #define BUS_RIDE_DELAY          5000
-#define BUS_SEATS               3
+#define BUS_SEATS               2
 
 #define RIDER_ARRIVAL_DELAY     100*20
 #define RIDER_BOARDING_DELAY    50*20

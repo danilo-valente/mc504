@@ -7,9 +7,12 @@
 
 class Bus : public Worker {
 public:
+    int aboard;
+
     Bus(int id, SDL_Renderer *renderer, WArgs *args);
 
     void arrive();
+    void wait();
     void depart();
     int work();
 };
