@@ -1,25 +1,36 @@
 #ifndef WORKER_H
 #define WORKER_H
 
+#include <string>
 #include <SDL.h>
 
-#include "LTexture.h"
-#include "Dot.h"
+using namespace std;
+
+class WArgs {
+public:
+    int waiting;
+    SDL_sem *mutex;
+    SDL_sem *bus;
+    SDL_sem *boarded;
+    SDL_sem *cout;
+
+    WArgs(int waiting, Uint32 nmutex, Uint32 nbus, Uint32 nboarded);
+    ~WArgs();
+};
 
 class Worker {
 public:
-    Worker(int id, Dot *dots, int n, int delay, int itr, SDL_Renderer *renderer, SDL_sem *dataLock);
+    Worker(int id, SDL_Renderer *renderer, WArgs *args);
 
-    static int work(void *worker);
+    void log(string message);
+    virtual int work() = 0;
 
-private:
+    static int worker(void *worker);
+
+protected:
     int id;
-    Dot *dots;
-    int n;
-    int delay;
-    int itr;
     SDL_Renderer *renderer;
-    SDL_sem *dataLock;
+    WArgs *args;
 };
 
 #endif

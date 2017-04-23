@@ -1,10 +1,19 @@
-cmake_minimum_required(VERSION 3.6)
+cmake_minimum_required(VERSION 2.5)
 project(projeto1)
 include(FindPkgConfig)
 
 set(CMAKE_C_STANDARD 11)
 
-set(SOURCE_FILES main.cpp LTexture.cpp LTexture.h LTimer.cpp LTimer.h Dot.cpp Dot.h constants.h Worker.cpp Worker.h)
+set(SOURCE_FILES
+        constants.h
+        main.cpp
+        LTexture.cpp LTexture.h
+        LTimer.cpp LTimer.h
+        Dot.cpp Dot.h
+        Worker.cpp Worker.h
+        Bus.h Bus.cpp
+        Rider.h Rider.cpp
+)
 add_executable(projeto1 ${SOURCE_FILES})
 
 # SDL2

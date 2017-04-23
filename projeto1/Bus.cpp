@@ -1,47 +1,57 @@
 #include <iostream>
-#include "Worker.h"
+#include "Bus.h"
 #include "constants.h"
 
-WArgs::WArgs(int waiting, Uint32 nmutex, Uint32 nbus, Uint32 nboarded) {
-    this->waiting = waiting;
-    this->mutex = SDL_CreateSemaphore(nmutex);
-    this->bus = SDL_CreateSemaphore(nbus);
-    this->boarded = SDL_CreateSemaphore(nboarded);
-    this->cout = SDL_CreateSemaphore(1);
+using namespace std;
+
+Bus::Bus(int id, SDL_Renderer *renderer, WArgs *args) : Worker(id, renderer, args) {}
+
+void Bus::arrive() {
+    log("Bus is arriving");
+
+    SDL_Delay(BUS_ARRIVAL_DELAY);
+
+    log("Bus just arrived");
 }
 
-WArgs::~WArgs() {
-    SDL_DestroySemaphore(mutex);
-    SDL_DestroySemaphore(bus);
-    SDL_DestroySemaphore(boarded);
+void Bus::depart() {
+    log("Bus is departing");
+    cout << "[" << id << "] " << "Bus is carring " << SDL_SemValue(args->boarded) << " riders" << endl;
+
+    SDL_Delay(BUS_DEPARTURE_DELAY);
+
+    log("Bus just departed");
+
+    SDL_Delay(BUS_RIDE_DELAY);
 }
 
-Worker::Worker(int id, SDL_Renderer *renderer, WArgs *args) {
-    this->id = id;
-    this->renderer = renderer;
-    this->args = args;
-}
-
-void Worker::log(string message) {
-    SDL_SemWait(args->cout);
-
-    cout << "[" << id << "] " << message << endl;
-
-    SDL_SemPost(args->cout);
-}
-
-//int Worker::work() {
-//    printf("[#%d] starting...\n", this->id);
-//
+int Bus::work() {
 //    //Pre thread random seeding
 //    srand(SDL_GetTicks());
 //
 //    //Wait randomly
 //    SDL_Delay(16 + rand() % 32);
-//
-//    //Lock
-//    SDL_SemWait(this->dataLock);
-//
+
+//    log("Acquiring lock for mutex");
+
+    SDL_SemWait(args->mutex);
+
+    arrive();
+
+//    log("Lock for mutex acquired");
+
+    int n = min(args->waiting, BUS_SEATS);
+    for (int i = 0; i < n; i++) {
+        SDL_SemPost(args->bus);
+        SDL_SemWait(args->boarded);
+    }
+
+    args->waiting = max(args->waiting - BUS_SEATS, 0);
+
+    SDL_SemPost(args->mutex);
+
+    depart();
+
 //    SDL_SetRenderDrawColor(this->renderer, 0xFF, 0xFF, 0xFF, 0xFF);
 //    SDL_RenderClear(this->renderer);
 //
@@ -74,18 +84,6 @@ void Worker::log(string message) {
 //    SDL_Delay(16 + rand() % 640);
 //
 //    printf("[#%d] finished!\n", this->id);
-//
-//    return 0;
-//}
-
-int Worker::worker(void *arg) {
-    Worker *worker = (Worker *) arg;
-
-    SDL_Delay(WORKER_SETUP_DELAY);
-
-    while (1) {
-        worker->work();
-    }
 
     return 0;
 }

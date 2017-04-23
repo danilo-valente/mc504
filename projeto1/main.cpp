@@ -4,12 +4,17 @@ and may not be redistributed without written permission.*/
 //Using SDL, SDL_image, standard IO, and, strings
 #include <SDL.h>
 #include <SDL_image.h>
+#include <iostream>
 
 #include "LTexture.h"
 #include "Dot.h"
 
 #include "constants.h"
 #include "Worker.h"
+#include "Bus.h"
+#include "Rider.h"
+
+using namespace std;
 
 //Starts up SDL and creates window
 bool init();
@@ -113,21 +118,25 @@ void close() {
 }
 
 int main(int argc, char *args[]) {
-    int n = DEFAULT_N;
-    int delay = DEFAULT_DELAY;
-    int itr = DEFAULT_ITR;
+    int l, m, n;
+//    bool use_sem = true;
 
-    printf("Number of threads: ");
-    scanf("%d", &n);
+    cout << "Number of buses: ";
+    cin >> n;
 
-    printf("Delay: ");
-    scanf("%d", &delay);
+    cout << "Number of riders: ";
+    cin >> m;
 
-    printf("Iterations: ");
-    scanf("%d", &itr);
+//    cout << "Use semaphore? ";
+//    cin >> use_sem;
 
-    Worker *gWorkers[n];
-    Dot gDots[n];
+    l = n + m;
+
+    WArgs wargs(0, 1, 0, 0);
+
+    Worker *gWorkers[l];
+    SDL_Thread *threads[l];
+//    Dot gDots[n];
 
     //Start up SDL and create window
     if (!init()) {
@@ -143,37 +152,43 @@ int main(int argc, char *args[]) {
             //Event handler
             SDL_Event e;
 
-            for (int i = 0; i < n; i++) {
-                gWorkers[i] = new Worker(i, gDots, n, delay, itr, gRenderer, gDataLock);
-                gDots[i].setPos(DOT_WIDTH * i, 0);
-                gDots[i].setRenderer(gRenderer);
-                gDots[i].setSize(DOT_WIDTH, DOT_HEIGHT);
+            int i;
+            for (i = 0; i < n; i++) {
+                gWorkers[i] = new Bus(i, gRenderer, &wargs);
+//                gDots[i].setPos(DOT_WIDTH * i, 0);
+//                gDots[i].setRenderer(gRenderer);
+//                gDots[i].setSize(DOT_WIDTH, DOT_HEIGHT);
+            }
+
+            for (; i < l; i++) {
+                gWorkers[i] = new Rider(i, gRenderer, &wargs);
             }
 
             //Run the threads
             srand(SDL_GetTicks());
 
-            SDL_Thread *threads[n];
-            for (int i = 0; i < n; i++) {
-                threads[i] = SDL_CreateThread(Worker::work, NULL, (void *) gWorkers[i]);
-                SDL_Delay(16 + rand() % 32);
+            for (i = 0; i < l; i++) {
+                threads[i] = SDL_CreateThread(Worker::worker, NULL, (void *) gWorkers[i]);
+//                SDL_Delay(16 + rand() % 32);
             }
 
             //While application is running
-            while (!quit) {
-                //Handle events on queue
-                while (SDL_PollEvent(&e) != 0) {
-                    //User requests quit
-                    if (e.type == SDL_QUIT) {
-                        quit = true;
-                    }
-                }
-            }
+//            while (!quit) {
+//                //Handle events on queue
+//                while (SDL_PollEvent(&e) != 0) {
+//                    //User requests quit
+//                    if (e.type == SDL_QUIT) {
+//                        quit = true;
+//                    }
+//                }
+//            }
 
             //Wait for threads to finish
-            for (int i = 0; i < n; i++) {
+            for (i = 0; i < l; i++) {
                 SDL_WaitThread(threads[i], NULL);
             }
+
+            SDL_Delay(2000);
         }
     }
 

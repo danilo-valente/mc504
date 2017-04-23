@@ -5,9 +5,15 @@
 #define SCREEN_WIDTH 640
 #define SCREEN_HEIGHT 480
 
-#define DEFAULT_N 5
-#define DEFAULT_DELAY 250
-#define DEFAULT_ITR 3
+#define WORKER_SETUP_DELAY      1000
+
+#define BUS_ARRIVAL_DELAY       250*20
+#define BUS_DEPARTURE_DELAY     500*20
+#define BUS_RIDE_DELAY          5000
+#define BUS_SEATS               3
+
+#define RIDER_ARRIVAL_DELAY     100*20
+#define RIDER_BOARDING_DELAY    50*20
 
 #define DOT_WIDTH 20
 #define DOT_HEIGHT 20
