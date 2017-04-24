@@ -26,8 +26,12 @@ private:
     void drawStreet();
     void drawSidewalk();
     void drawCurrentBus();
+    void drawBoardingRider();
+    void drawWaitingRiders();
+    void drawRider(RiderShape *shape, int r, int *i);
 
     BusShape * findCurrentBus();
+    RiderShape * findBoardingRider();
 };
 
 

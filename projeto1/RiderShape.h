@@ -12,6 +12,9 @@ public:
     RiderShape();
 
     void draw(SDL_Renderer *renderer, int x, int y);
+
+private:
+    Uint32 getColor();
 };
 
 #endif

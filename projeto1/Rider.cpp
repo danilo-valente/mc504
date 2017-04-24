@@ -13,7 +13,7 @@ void Rider::arrive() {
 
     log("Rider is arriving");
 
-    SDL_Delay(RIDER_ARRIVAL_DELAY);
+    delay(RIDER_ARRIVAL_DELAY);
 
     SDL_SemWait(args->mutex);
 
@@ -33,16 +33,19 @@ void Rider::board() {
 
     log("Rider is boarding");
 
-    SDL_Delay(RIDER_BOARDING_DELAY);
+    delay(RIDER_BOARDING_DELAY);
 
     log("Rider just boarded");
 
     update(RIDER_AWAY);
 
     SDL_SemPost(args->boarded);
+
+    delay(RIDER_RIDE_DELAY);
 }
 
 int Rider::work() {
+    // TODO: add lock for drawing
     arrive();
 
     board();

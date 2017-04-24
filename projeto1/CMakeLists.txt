@@ -8,9 +8,6 @@ set(CMAKE_CXX_STANDARD 11)
 set(SOURCE_FILES
         constants.h
         main.cpp
-        LTexture.cpp LTexture.h
-        LTimer.cpp LTimer.h
-        Dot.cpp Dot.h
         Worker.cpp Worker.h
         Bus.cpp Bus.h
         Rider.cpp Rider.h

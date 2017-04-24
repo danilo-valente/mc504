@@ -16,7 +16,7 @@ void Bus::arrive() {
 
     log("Bus is arriving");
 
-    SDL_Delay(BUS_ARRIVAL_DELAY);
+    delay(BUS_ARRIVAL_DELAY);
 
     SDL_SemWait(args->mutex);
 
@@ -43,16 +43,17 @@ void Bus::depart() {
 
     log("Bus is departing with " + to_string(aboard) + " riders aboard");
 
-    SDL_Delay(BUS_DEPARTURE_DELAY);
+    delay(BUS_DEPARTURE_DELAY);
 
     update(BUS_AWAY);
 
     log("Bus just departed");
 
-    SDL_Delay(BUS_RIDE_DELAY);
+    delay(BUS_RIDE_DELAY);
 }
 
 int Bus::work() {
+    // TODO: add lock for drawing
     arrive();
 
     wait();

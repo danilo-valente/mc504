@@ -33,11 +33,18 @@ void Worker::log(string message) {
 int Worker::worker(void *arg) {
     Worker *worker = (Worker *) arg;
 
-    SDL_Delay(WORKER_SETUP_DELAY);
+    delay(WORKER_SETUP_DELAY);
 
     while (1) {
         worker->work();
     }
 
     return 0;
+}
+
+void Worker::delay(Uint32 time) {
+    double r = 2 * ((rand() % WORKER_RAND_RANGE) - WORKER_RAND_RANGE);
+    double v = 1 + r * WORKER_RAND_VARIATION / WORKER_RAND_RANGE;
+    Uint32 t = (Uint32) (time * v);
+    SDL_Delay(t);
 }

@@ -6,9 +6,6 @@ and may not be redistributed without written permission.*/
 #include <SDL_image.h>
 #include <iostream>
 
-#include "LTexture.h"
-#include "Dot.h"
-
 #include "constants.h"
 #include "Worker.h"
 #include "Bus.h"
@@ -30,9 +27,6 @@ SDL_Window *gWindow = NULL;
 
 //The window renderer
 SDL_Renderer *gRenderer = NULL;
-
-//Scene textures
-LTexture *gDotTexture = NULL;
 
 //Data access semaphore
 SDL_sem *gDataLock = NULL;
@@ -67,8 +61,6 @@ bool init() {
                 //Initialize renderer color
                 SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
 
-                gDotTexture = new LTexture(gRenderer);
-
                 //Initialize PNG loading
                 int imgFlags = IMG_INIT_PNG;
                 if (!(IMG_Init(imgFlags) & imgFlags)) {
@@ -89,18 +81,10 @@ bool loadMedia() {
     //Loading success flag
     bool success = true;
 
-    //Load dot texture
-    if (!gDotTexture->loadFromFile("../images/dot.bmp")) {
-        printf("Failed to load dot texture!\n");
-        success = false;
-    }
-
     return success;
 }
 
 void close() {
-    //Free loaded images
-    gDotTexture->free();
 
     //Free semaphore
     SDL_DestroySemaphore(gDataLock);
@@ -119,18 +103,12 @@ void close() {
 
 int main(int argc, char *args[]) {
     int l, m, n;
-//    bool use_sem = true;
 
-//    cout << "Number of buses: ";
-//    cin >> n;
-//
-//    cout << "Number of riders: ";
-//    cin >> m;
-    n = 3;
-    m = 5;
+    cout << "Number of buses: ";
+    cin >> n;
 
-//    cout << "Use semaphore? ";
-//    cin >> use_sem;
+    cout << "Number of riders: ";
+    cin >> m;
 
     l = n + m;
 
@@ -160,10 +138,6 @@ int main(int argc, char *args[]) {
             int i;
             for (i = 0; i < n; i++) {
                 gWorkers[i] = new Bus(i, &street, &wargs);
-//                street.addBus((Worker *) &gWorkers[i]);
-//                gDots[i].setPos(DOT_WIDTH * i, 0);
-//                gDots[i].setRenderer(gRenderer);
-//                gDots[i].setSize(DOT_WIDTH, DOT_HEIGHT);
             }
 
             for (; i < l; i++) {
@@ -188,11 +162,6 @@ int main(int argc, char *args[]) {
                     }
                 }
             }
-
-//            //Wait for threads to finish
-//            for (i = 0; i < l; i++) {
-//                SDL_WaitThread(threads[i], NULL);
-//            }
         }
     }
 

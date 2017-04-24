@@ -1,3 +1,4 @@
+#include <iostream>
 #include "Street.h"
 #include "constants.h"
 
@@ -28,6 +29,8 @@ void Street::draw() {
     drawSidewalk();
 
     drawCurrentBus();
+    drawBoardingRider();
+    drawWaitingRiders();
 
     SDL_RenderPresent(renderer);
 
@@ -51,11 +54,11 @@ void Street::drawStreet() {
 }
 
 void Street::drawSidewalk() {
-    Uint32 sidewalkColor = STREET_SIDEWALK_COLOR;
-    int x = STREET_WIDTH;
-    int y = 0;
-    int w = SCREEN_WIDTH - x;
-    int h = SCREEN_HEIGHT - y;
+    Uint32 sidewalkColor = SIDEWALK_COLOR;
+    int x = SIDEWALK_X;
+    int y = SIDEWALK_Y;
+    int w = SIDEWALK_WIDTH;
+    int h = SIDEWALK_HEIGHT;
 
     SDL_Rect fillRect = {x, y, w, h};
     SDL_SetRenderDrawColor(renderer, R(sidewalkColor), G(sidewalkColor), B(sidewalkColor), A(sidewalkColor));
@@ -69,10 +72,65 @@ void Street::drawCurrentBus() {
     }
 }
 
+void Street::drawBoardingRider() {
+    RiderShape *rider = findBoardingRider();
+    if (rider != NULL) {
+        rider->draw(renderer, RIDER_BASE_X, RIDER_BASE_Y);
+    }
+}
+
+void Street::drawWaitingRiders() {
+    vector<RiderShape *>::iterator itr;
+    int r = RIDER_ROW_LENGTH - 1;
+    int i = 0;
+
+    // Draw waiting riders
+    itr = riders.begin();
+    while (itr != riders.end()) {
+        if ((*itr)->status == RIDER_WAITING) {
+            drawRider(*itr, r, &i);
+        }
+
+        itr++;
+    }
+
+    i = (int) ceil(i / r) * r;
+
+    // Draw arriving riders
+    itr = riders.begin();
+    while (itr != riders.end()) {
+        if ((*itr)->status == RIDER_ARRIVING) {
+            drawRider(*itr, r, &i);
+        }
+
+        itr++;
+    }
+}
+
+void Street::drawRider(RiderShape *shape, int r, int *i) {
+    int x = RIDER_BASE_X + (1 + *i % r) * (RIDER_WIDTH + RIDER_SPACING);
+    int y = RIDER_BASE_Y + (*i / r) * (RIDER_HEIGHT + RIDER_SPACING);
+    shape->draw(renderer, x, y);
+    (*i)++;
+}
+
 BusShape * Street::findCurrentBus() {
     vector<BusShape *>::iterator itr = buses.begin();
     while (itr != buses.end()) {
         if ((*itr)->status == BUS_WAITING || (*itr)->status == BUS_DEPARTING) {
+            return *itr;
+        }
+
+        itr++;
+    }
+
+    return NULL;
+}
+
+RiderShape * Street::findBoardingRider() {
+    vector<RiderShape *>::iterator itr = riders.begin();
+    while (itr != riders.end()) {
+        if ((*itr)->status == RIDER_BOARDING) {
             return *itr;
         }
 

@@ -32,6 +32,8 @@ protected:
     int id;
     Street *street;
     WArgs *args;
+
+    static void delay(Uint32 time);
 };
 
 #endif
