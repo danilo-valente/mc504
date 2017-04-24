@@ -56,11 +56,4 @@
 #define B(c) ((Uint8) (((c) >> 8) & 0xff))
 #define A(c) ((Uint8) ((c) & 0xff))
 
-#define DOT_WIDTH 20
-#define DOT_HEIGHT 20
-#define DOT_VEL 640
-
-#define COLOR_RED   0xFF0000FF
-#define COLOR_GREEN 0x00FF00FF
-
 #endif
