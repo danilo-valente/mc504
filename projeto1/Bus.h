@@ -15,7 +15,9 @@ public:
 
     Bus(int id, Street *street, WArgs *args);
 
+protected:
     int work();
+
 private:
     void arrive();
     void wait();

@@ -23,15 +23,15 @@ class Worker {
 public:
     Worker(int id, Street *street, WArgs *args);
 
-    void log(string message);
-    virtual int work() = 0;
-
     static int worker(void *worker);
 
 protected:
     int id;
     Street *street;
     WArgs *args;
+
+    void log(string message);
+    virtual int work() = 0;
 
     static void delay(Uint32 time);
 };

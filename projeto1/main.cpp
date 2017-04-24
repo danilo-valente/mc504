@@ -16,9 +16,6 @@ using namespace std;
 //Starts up SDL and creates window
 bool init();
 
-//Loads media
-bool loadMedia();
-
 //Frees media and shuts down SDL
 void close();
 
@@ -27,9 +24,6 @@ SDL_Window *gWindow = NULL;
 
 //The window renderer
 SDL_Renderer *gRenderer = NULL;
-
-//Data access semaphore
-SDL_sem *gDataLock = NULL;
 
 bool init() {
     //Initialization flag
@@ -74,21 +68,7 @@ bool init() {
     return success;
 }
 
-bool loadMedia() {
-    //Initialize semaphore
-    gDataLock = SDL_CreateSemaphore(1);
-
-    //Loading success flag
-    bool success = true;
-
-    return success;
-}
-
 void close() {
-
-    //Free semaphore
-    SDL_DestroySemaphore(gDataLock);
-    gDataLock = NULL;
 
     //Destroy window
     SDL_DestroyRenderer(gRenderer);
@@ -99,6 +79,25 @@ void close() {
     //Quit SDL subsystems
     IMG_Quit();
     SDL_Quit();
+}
+
+void waitQuit() {
+    //Main loop flag
+    bool quit = false;
+
+    //Event handler
+    SDL_Event e;
+
+    //While application is running
+    while (!quit) {
+        //Handle events on queue
+        while (SDL_PollEvent(&e) != 0) {
+            //User requests quit
+            if (e.type == SDL_QUIT) {
+                quit = true;
+            }
+        }
+    }
 }
 
 int main(int argc, char *args[]) {
@@ -114,55 +113,34 @@ int main(int argc, char *args[]) {
 
     WArgs wargs(0, 1, 0, 0);
 
-    Worker *gWorkers[l];
+    Worker *workers[l];
     SDL_Thread *threads[l];
-//    Dot gDots[n];
 
     //Start up SDL and create window
     if (!init()) {
         printf("Failed to initialize!\n");
     } else {
-        //Load media
-        if (!loadMedia()) {
-            printf("Failed to load media!\n");
-        } else {
-            //Main loop flag
-            bool quit = false;
+        Street street(gRenderer);
 
-            //Event handler
-            SDL_Event e;
-            Street street(gRenderer);
+        street.draw();
 
-            street.draw();
-
-            int i;
-            for (i = 0; i < n; i++) {
-                gWorkers[i] = new Bus(i, &street, &wargs);
-            }
-
-            for (; i < l; i++) {
-                gWorkers[i] = new Rider(i, &street, &wargs);
-//                street.addRider((Worker *) &gWorkers[i]);
-            }
-
-            //Run the threads
-            srand(SDL_GetTicks());
-
-            for (i = 0; i < l; i++) {
-                threads[i] = SDL_CreateThread(Worker::worker, NULL, (void *) gWorkers[i]);
-            }
-
-            //While application is running
-            while (!quit) {
-                //Handle events on queue
-                while (SDL_PollEvent(&e) != 0) {
-                    //User requests quit
-                    if (e.type == SDL_QUIT) {
-                        quit = true;
-                    }
-                }
-            }
+        int i;
+        for (i = 0; i < n; i++) {
+            workers[i] = new Bus(i, &street, &wargs);
         }
+
+        for (; i < l; i++) {
+            workers[i] = new Rider(i, &street, &wargs);
+        }
+
+        //Run the threads
+        srand(SDL_GetTicks());
+
+        for (i = 0; i < l; i++) {
+            threads[i] = SDL_CreateThread(Worker::worker, NULL, (void *) workers[i]);
+        }
+
+        waitQuit();
     }
 
     //Free resources and close SDL

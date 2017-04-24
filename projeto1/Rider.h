@@ -4,6 +4,7 @@
 #include <SDL.h>
 
 #include "Worker.h"
+#include "Street.h"
 #include "RiderStatus.h"
 #include "RiderShape.h"
 
@@ -12,10 +13,13 @@ public:
     RiderShape shape;
 
     Rider(int id, Street *street, WArgs *args);
+
+protected:
+    int work();
+
 private:
     void arrive();
     void board();
-    int work();
     void update(RiderStatus status);
 };
 

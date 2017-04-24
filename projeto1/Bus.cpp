@@ -14,13 +14,9 @@ void Bus::arrive() {
 
     update(BUS_ARRIVING);
 
-    log("Bus is arriving");
-
     delay(BUS_ARRIVAL_DELAY);
 
     SDL_SemWait(args->mutex);
-
-    log("Bus just arrived");
 }
 
 void Bus::wait() {
@@ -34,26 +30,21 @@ void Bus::wait() {
     }
 
     args->waiting = max(args->waiting - BUS_SEATS, 0);
-
-    SDL_SemPost(args->mutex);
 }
 
 void Bus::depart() {
     update(BUS_DEPARTING);
 
-    log("Bus is departing with " + to_string(aboard) + " riders aboard");
-
     delay(BUS_DEPARTURE_DELAY);
 
     update(BUS_AWAY);
 
-    log("Bus just departed");
+    SDL_SemPost(args->mutex);
 
     delay(BUS_RIDE_DELAY);
 }
 
 int Bus::work() {
-    // TODO: add lock for drawing
     arrive();
 
     wait();
@@ -66,4 +57,19 @@ int Bus::work() {
 void Bus::update(BusStatus status) {
     shape.status = status;
     street->draw();
+
+    switch (status) {
+        case BUS_ARRIVING:
+            log("Bus is arriving");
+            break;
+        case BUS_WAITING:
+            log("Bus just arrived");
+            break;
+        case BUS_DEPARTING:
+            log("Bus is departing with " + to_string(aboard) + " riders aboard");
+            break;
+        case BUS_AWAY:
+            log("Bus just departed");
+            break;
+    }
 }

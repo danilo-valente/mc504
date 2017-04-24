@@ -11,8 +11,6 @@ Rider::Rider(int id, Street *street, WArgs *args) : Worker(id, street, args) {
 void Rider::arrive() {
     update(RIDER_ARRIVING);
 
-    log("Rider is arriving");
-
     delay(RIDER_ARRIVAL_DELAY);
 
     SDL_SemWait(args->mutex);
@@ -20,8 +18,6 @@ void Rider::arrive() {
     args->waiting++;
 
     update(RIDER_WAITING);
-
-    log("Rider just arrived");
 
     SDL_SemPost(args->mutex);
 }
@@ -31,11 +27,7 @@ void Rider::board() {
 
     update(RIDER_BOARDING);
 
-    log("Rider is boarding");
-
     delay(RIDER_BOARDING_DELAY);
-
-    log("Rider just boarded");
 
     update(RIDER_AWAY);
 
@@ -45,7 +37,6 @@ void Rider::board() {
 }
 
 int Rider::work() {
-    // TODO: add lock for drawing
     arrive();
 
     board();
@@ -56,4 +47,19 @@ int Rider::work() {
 void Rider::update(RiderStatus status) {
     shape.status = status;
     street->draw();
+
+    switch (status) {
+        case RIDER_ARRIVING:
+            log("Rider is arriving");
+            break;
+        case RIDER_WAITING:
+            log("Rider just arrived");
+            break;
+        case RIDER_BOARDING:
+            log("Rider is boarding");
+            break;
+        case RIDER_AWAY:
+            log("Rider just boarded");
+            break;
+    }
 }

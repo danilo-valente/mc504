@@ -8,15 +8,15 @@ set(CMAKE_CXX_STANDARD 11)
 set(SOURCE_FILES
         constants.h
         main.cpp
+        Street.cpp Street.h
+        BusStatus.h
+        RiderStatus.h
         Worker.cpp Worker.h
         Bus.cpp Bus.h
         Rider.cpp Rider.h
-        Street.cpp Street.h
-        BusShape.cpp BusShape.h
-        BusStatus.h
-        RiderStatus.h
-        RiderShape.cpp RiderShape.h
         Shape.h
+        BusShape.cpp BusShape.h
+        RiderShape.cpp RiderShape.h
 )
 add_executable(projeto1 ${SOURCE_FILES})
 
