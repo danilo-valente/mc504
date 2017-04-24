@@ -9,6 +9,7 @@ Bus::Bus(int id, SDL_Renderer *renderer, WArgs *args) : Worker(id, renderer, arg
 }
 
 void Bus::arrive() {
+    status = BUS_ARRIVING;
     aboard = 0;
 
     log("Bus is arriving");
@@ -21,6 +22,8 @@ void Bus::arrive() {
 }
 
 void Bus::wait() {
+    status = BUS_WAITING;
+
     int n = min(args->waiting, BUS_SEATS);
     for (int i = 0; i < n; i++) {
         SDL_SemPost(args->bus);
@@ -34,9 +37,13 @@ void Bus::wait() {
 }
 
 void Bus::depart() {
+    status = BUS_DEPARTING;
+
     log("Bus is departing with " + to_string(aboard) + " riders aboard");
 
     SDL_Delay(BUS_DEPARTURE_DELAY);
+
+    status = BUS_AWAY;
 
     log("Bus just departed");
 

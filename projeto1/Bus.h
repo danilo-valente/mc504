@@ -5,8 +5,16 @@
 
 #include "Worker.h"
 
+typedef enum {
+    BUS_AWAY,
+    BUS_ARRIVING,
+    BUS_WAITING,
+    BUS_DEPARTING,
+} BusStatus;
+
 class Bus : public Worker {
 public:
+    BusStatus status;
     int aboard;
 
     Bus(int id, SDL_Renderer *renderer, WArgs *args);
