@@ -121,11 +121,13 @@ int main(int argc, char *args[]) {
     int l, m, n;
 //    bool use_sem = true;
 
-    cout << "Number of buses: ";
-    cin >> n;
-
-    cout << "Number of riders: ";
-    cin >> m;
+//    cout << "Number of buses: ";
+//    cin >> n;
+//
+//    cout << "Number of riders: ";
+//    cin >> m;
+    n = 3;
+    m = 5;
 
 //    cout << "Use semaphore? ";
 //    cin >> use_sem;
@@ -151,17 +153,22 @@ int main(int argc, char *args[]) {
 
             //Event handler
             SDL_Event e;
+            Street street(gRenderer);
+
+            street.draw();
 
             int i;
             for (i = 0; i < n; i++) {
-                gWorkers[i] = new Bus(i, gRenderer, &wargs);
+                gWorkers[i] = new Bus(i, &street, &wargs);
+//                street.addBus((Worker *) &gWorkers[i]);
 //                gDots[i].setPos(DOT_WIDTH * i, 0);
 //                gDots[i].setRenderer(gRenderer);
 //                gDots[i].setSize(DOT_WIDTH, DOT_HEIGHT);
             }
 
             for (; i < l; i++) {
-                gWorkers[i] = new Rider(i, gRenderer, &wargs);
+                gWorkers[i] = new Rider(i, &street, &wargs);
+//                street.addRider((Worker *) &gWorkers[i]);
             }
 
             //Run the threads
@@ -169,26 +176,23 @@ int main(int argc, char *args[]) {
 
             for (i = 0; i < l; i++) {
                 threads[i] = SDL_CreateThread(Worker::worker, NULL, (void *) gWorkers[i]);
-//                SDL_Delay(16 + rand() % 32);
             }
 
             //While application is running
-//            while (!quit) {
-//                //Handle events on queue
-//                while (SDL_PollEvent(&e) != 0) {
-//                    //User requests quit
-//                    if (e.type == SDL_QUIT) {
-//                        quit = true;
-//                    }
-//                }
-//            }
-
-            //Wait for threads to finish
-            for (i = 0; i < l; i++) {
-                SDL_WaitThread(threads[i], NULL);
+            while (!quit) {
+                //Handle events on queue
+                while (SDL_PollEvent(&e) != 0) {
+                    //User requests quit
+                    if (e.type == SDL_QUIT) {
+                        quit = true;
+                    }
+                }
             }
 
-            SDL_Delay(2000);
+//            //Wait for threads to finish
+//            for (i = 0; i < l; i++) {
+//                SDL_WaitThread(threads[i], NULL);
+//            }
         }
     }
 

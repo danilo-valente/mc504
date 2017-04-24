@@ -4,25 +4,23 @@
 #include <SDL.h>
 
 #include "Worker.h"
-
-typedef enum {
-    BUS_AWAY,
-    BUS_ARRIVING,
-    BUS_WAITING,
-    BUS_DEPARTING,
-} BusStatus;
+#include "Street.h"
+#include "BusStatus.h"
+#include "BusShape.h"
 
 class Bus : public Worker {
 public:
-    BusStatus status;
+    BusShape shape;
     int aboard;
 
-    Bus(int id, SDL_Renderer *renderer, WArgs *args);
+    Bus(int id, Street *street, WArgs *args);
 
+    int work();
+private:
     void arrive();
     void wait();
     void depart();
-    int work();
+    void update(BusStatus status);
 };
 
 #endif

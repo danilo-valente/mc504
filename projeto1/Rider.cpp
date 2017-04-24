@@ -4,12 +4,12 @@
 
 using namespace std;
 
-Rider::Rider(int id, SDL_Renderer *renderer, WArgs *args) : Worker(id, renderer, args) {
-    status = RIDER_AWAY;
+Rider::Rider(int id, Street *street, WArgs *args) : Worker(id, street, args) {
+    street->addRider(&shape);
 }
 
 void Rider::arrive() {
-    status = RIDER_ARRIVING;
+    update(RIDER_ARRIVING);
 
     log("Rider is arriving");
 
@@ -19,7 +19,7 @@ void Rider::arrive() {
 
     args->waiting++;
 
-    status = RIDER_WAITING;
+    update(RIDER_WAITING);
 
     log("Rider just arrived");
 
@@ -29,7 +29,7 @@ void Rider::arrive() {
 void Rider::board() {
     SDL_SemWait(args->bus);
 
-    status = RIDER_BOARDING;
+    update(RIDER_BOARDING);
 
     log("Rider is boarding");
 
@@ -37,14 +37,20 @@ void Rider::board() {
 
     log("Rider just boarded");
 
-    status = RIDER_AWAY;
+    update(RIDER_AWAY);
 
     SDL_SemPost(args->boarded);
 }
 
 int Rider::work() {
     arrive();
+
     board();
 
     return 0;
+}
+
+void Rider::update(RiderStatus status) {
+    shape.status = status;
+    street->draw();
 }

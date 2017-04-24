@@ -4,23 +4,19 @@
 #include <SDL.h>
 
 #include "Worker.h"
-
-typedef enum {
-    RIDER_AWAY,
-    RIDER_ARRIVING,
-    RIDER_WAITING,
-    RIDER_BOARDING
-} RiderStatus;
+#include "RiderStatus.h"
+#include "RiderShape.h"
 
 class Rider : public Worker {
 public:
-    RiderStatus status;
+    RiderShape shape;
 
-    Rider(int id, SDL_Renderer *renderer, WArgs *args);
-
+    Rider(int id, Street *street, WArgs *args);
+private:
     void arrive();
     void board();
     int work();
+    void update(RiderStatus status);
 };
 
 #endif

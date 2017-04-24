@@ -3,6 +3,7 @@
 
 #include <string>
 #include <SDL.h>
+#include "Street.h"
 
 using namespace std;
 
@@ -20,7 +21,7 @@ public:
 
 class Worker {
 public:
-    Worker(int id, SDL_Renderer *renderer, WArgs *args);
+    Worker(int id, Street *street, WArgs *args);
 
     void log(string message);
     virtual int work() = 0;
@@ -29,7 +30,7 @@ public:
 
 protected:
     int id;
-    SDL_Renderer *renderer;
+    Street *street;
     WArgs *args;
 };
 

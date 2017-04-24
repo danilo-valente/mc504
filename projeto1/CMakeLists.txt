@@ -12,8 +12,14 @@ set(SOURCE_FILES
         LTimer.cpp LTimer.h
         Dot.cpp Dot.h
         Worker.cpp Worker.h
-        Bus.h Bus.cpp
-        Rider.h Rider.cpp
+        Bus.cpp Bus.h
+        Rider.cpp Rider.h
+        Street.cpp Street.h
+        BusShape.cpp BusShape.h
+        BusStatus.h
+        RiderStatus.h
+        RiderShape.cpp RiderShape.h
+        Shape.h
 )
 add_executable(projeto1 ${SOURCE_FILES})
 
