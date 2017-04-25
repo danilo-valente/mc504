@@ -94,7 +94,7 @@ void Street::drawWaitingRiders() {
         itr++;
     }
 
-    i = (int) ceil(i / r) * r;
+    i = (int) ceil(i / r + 1) * r;
 
     // Draw arriving riders
     itr = riders.begin();

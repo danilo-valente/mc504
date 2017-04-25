@@ -1,16 +1,15 @@
 #ifndef CONSTANTS_H
 #define CONSTANTS_H
 
-//Screen dimension constants
-#define SCREEN_WIDTH 1024
-#define SCREEN_HEIGHT 768
+#define WINDOW_WIDTH            1366
+#define WINDOW_HEIGHT           768
 
 #define WORKER_SETUP_DELAY      1000
 #define WORKER_RAND_RANGE       1024
 #define WORKER_RAND_VARIATION   0.2
 
-#define STREET_WIDTH            ((int) (SCREEN_WIDTH * 0.67))
-#define STREET_HEIGHT           SCREEN_HEIGHT
+#define STREET_WIDTH            ((int) (WINDOW_WIDTH * 0.67))
+#define STREET_HEIGHT           WINDOW_HEIGHT
 #define STREET_COLOR            0x2b2b2bff
 
 #define STREET_PATH_WIDTH       20
@@ -21,8 +20,8 @@
 
 #define SIDEWALK_X              STREET_WIDTH
 #define SIDEWALK_Y              0
-#define SIDEWALK_WIDTH          (SCREEN_WIDTH - SIDEWALK_X)
-#define SIDEWALK_HEIGHT         (SCREEN_HEIGHT - SIDEWALK_Y)
+#define SIDEWALK_WIDTH          (WINDOW_WIDTH - SIDEWALK_X)
+#define SIDEWALK_HEIGHT         (WINDOW_HEIGHT - SIDEWALK_Y)
 #define SIDEWALK_COLOR          0xaaaaaaff
 
 #define BUS_ARRIVAL_DELAY       250

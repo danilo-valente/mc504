@@ -54,6 +54,7 @@ void Rider::update(RiderStatus status) {
             break;
         case RIDER_WAITING:
             log("Rider just arrived");
+            log("There are " + to_string(args->waiting) + " riders waiting");
             break;
         case RIDER_BOARDING:
             log("Rider is boarding");
